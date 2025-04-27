@@ -77,11 +77,23 @@ def estimate_crack_time(password, common_passwords):
     results = {}
     for tier, rate in speeds.items():
         results[tier] = total_combinations / rate
+    
+    suggestions = []
+    if length < 8:
+        suggestions.append("Increase password length to at least 8 characters.")
+    if not has_lower:
+        suggestions.append("Add lowercase letters.")
+    if not has_upper:
+        suggestions.append("Add uppercase letters.")
+    if not has_digit:
+        suggestions.append("Include digits (0-9).")
+    if not has_special:
+        suggestions.append("Use special characters (e.g. !, @, #, $).")
 
-    return results
+    return results, suggestions
 
 
-def display_results(password, results):
+def display_results(password, results, suggestions):
     """
     Print human-friendly crack time estimates.
 
@@ -109,6 +121,13 @@ def display_results(password, results):
             time_str = f"{secs/31536000:.2f} years"
 
         print(f"- {tier}: {time_str}")
+    
+    if suggestions == []:
+        print("\nYour password is strong.")
+    else:
+        print("\nSuggestions to improve password strength:")
+        for suggestion in suggestions:
+            print(f"- {suggestion}")
 
 
 if __name__ == "__main__":
@@ -118,7 +137,7 @@ if __name__ == "__main__":
 
     pwd = input("Enter a password to check: ").strip()
     try:
-        results = estimate_crack_time(pwd, common_passwords)
-        display_results(pwd, results)
+        results, suggestions = estimate_crack_time(pwd, common_passwords)
+        display_results(pwd, results, suggestions)
     except ValueError as ve:
         print(f"Error: {ve}")
