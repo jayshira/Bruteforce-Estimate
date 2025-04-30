@@ -41,7 +41,7 @@ def estimate_crack_time(password, common_passwords):
     """
     # Instant if password is too common
     if password in common_passwords:
-        return {"Instant": True}
+        return {"Instant": True}, []
 
     # determine which character groups are used
     has_lower = any(c.islower() for c in password)
@@ -101,13 +101,13 @@ def display_results(password, results, suggestions):
     :param results: dict from estimate_crack_time()
     """
     print(f"Password: {password}")
-    print(f"Length: {len(password)}")
 
     if results.get("Instant"):
         print("Estimated Crack Time: Instant (common password)")
+        print("Try completely changing your password")
         return
 
-    print("Estimated Crack Times:")
+    print("\nEstimated Crack Times:")
     for tier, secs in results.items():
         if secs < 60:
             time_str = "less than a minute"
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     if not common_passwords:
         exit(1)
 
-    pwd = input("Enter a password to check: ").strip()
+    pwd = input("\nEnter a password to check: ").strip()
     try:
         results, suggestions = estimate_crack_time(pwd, common_passwords)
         display_results(pwd, results, suggestions)
